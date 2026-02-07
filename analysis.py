@@ -2,21 +2,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Load data
 df = pd.read_csv("data/raw_points.csv")
-
-# Make sure Points is numeric
 df["Points"] = pd.to_numeric(df["Points"], errors="coerce").fillna(0)
 
-# ---------- Longest Streak ----------
+# Longest Streak
 streak_df = df[["Name", "Date"]].copy()
 streak_df["Date"] = pd.to_datetime(streak_df["Date"], dayfirst=True)
 
-# Count only one award per student per day
 streak_df = streak_df.drop_duplicates()
-
 streak_df = streak_df.sort_values(["Name", "Date"])
-
 prev_date = streak_df["Date"].shift()
 
 is_consecutive = (
@@ -53,7 +47,7 @@ streak_leaderboard = (
     .sort_values("streak_length", ascending=False)
 )
 
-# ---------- Top Teacher ----------
+# Top Teacher
 teacher_points = (
     df.groupby("Teacher", dropna=False)["Points"]
       .sum()
@@ -68,7 +62,7 @@ print(
     f"with {top_teacher['Points']} total points given"
 )
 
-# ---------- Top Form ----------
+# Top Form
 form_points = (
     df.groupby("Form", dropna=False)["Points"]
       .sum()
@@ -83,7 +77,7 @@ print(
     f"with {top_form['Points']} total points given"
 )
 
-# ---------- Top Student ----------
+# Top Student
 student_points = (
     df.groupby("Name")["Points"]
       .sum()
@@ -98,7 +92,7 @@ print(
     f"with {top_student['Points']} total points given"
 )
 
-# ---------- Teacher Dependence ----------
+# Teacher Dependance
 student_teacher_points = (
     df.groupby(["Name", "Teacher"])["Points"]
       .sum()
@@ -120,7 +114,6 @@ dependence["dependence_pct"] = (
     dependence["Points"] / dependence["total_points"] * 100
 )
 
-# For each student, keep the teacher they depend on most
 max_dependence = (
     dependence
     .sort_values("dependence_pct", ascending=False)
@@ -129,20 +122,17 @@ max_dependence = (
     .reset_index()
 )
 
-# Sort overall leaderboard
 dependence_leaderboard = max_dependence.sort_values(
     "dependence_pct",
     ascending=False
 )
 
-# ---------- Longest No House Point Streak (including today) ----------
+# Longest No House Points Streak
 no_point_df = df[["Name", "Date"]].copy()
 no_point_df["Date"] = pd.to_datetime(no_point_df["Date"], dayfirst=True)
 
-# One award per student per day
 no_point_df = no_point_df.drop_duplicates()
 
-# Sort
 no_point_df = no_point_df.sort_values(["Name", "Date"])
 
 TODAY = pd.Timestamp.today().normalize()
@@ -156,7 +146,6 @@ results = []
 for name, group in no_point_df.groupby("Name"):
     dates = group["Date"].tolist()
 
-    # Pretend they got a point today
     if dates[-1] < TODAY:
         dates.append(TODAY)
 
@@ -176,8 +165,7 @@ no_point_streaks = (
       .sort_values("longest_no_house_point_streak", ascending=False)
 )
 
-# ---------- Gini Coefficient ----------
-import numpy as np
+# Gini Coefficient
 
 student_totals = df.groupby("Name")["Points"].sum().values
 
@@ -193,7 +181,7 @@ def gini(x):
 gini_score = gini(student_totals)
 print(f"Gini coefficient (student points inequality): {round(gini_score, 3)}")
 
-# ---------- Current Drought ----------
+# Drought
 today = pd.Timestamp.today().normalize()
 
 droughts = []
@@ -212,7 +200,7 @@ current_droughts = (
       .sort_values("current_drought_days", ascending=False)
 )
 
-# ---------- Teacher Bias Score ----------
+# Teacher Bias Score
 teacher_bias = []
 
 for teacher, group in df.groupby("Teacher"):
@@ -234,7 +222,7 @@ teacher_bias_df = (
       .sort_values("top_5_student_share_pct", ascending=False)
 )
 
-# ---------- Consistency Score ----------
+# Consistency Score
 consistency = []
 
 for name, group in no_point_df.groupby("Name"):
@@ -255,7 +243,7 @@ consistency_df = (
       .sort_values("consistency_score")
 )
 
-# ---------- Exclusive Pairs ----------
+# Exclusive Pairs
 exclusive_pairs = []
 
 student_teacher = (
@@ -290,7 +278,7 @@ exclusive_pairs = merged[
     (merged["teacher_focus_pct"] >= 30)
 ]
 
-# ---------- Save rankings ----------
+# Save Tables
 streak_leaderboard.to_csv("tables/streak_leaderboard.csv", index=False)
 teacher_points.to_csv("tables/teacher_points.csv", index=False)
 form_points.to_csv("tables/form_points.csv", index=False)

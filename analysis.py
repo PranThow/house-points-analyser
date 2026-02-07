@@ -290,7 +290,7 @@ teacher_bias_df.to_csv("tables/teacher_bias_score.csv", index=False)
 consistency_df.to_csv("tables/consistency_score.csv", index=False)
 exclusive_pairs.to_csv("tables/exclusive_pairs.csv", index=False)
 
-top_students_plot = student_points.head(10)
+top_students_plot = student_points.head(20)
 
 # Plot all graphs
 plt.figure()
@@ -305,7 +305,7 @@ plt.tight_layout()
 plt.savefig("graphs/top_students.png")
 plt.close()
 
-top_streaks_plot = streak_leaderboard.head(10)
+top_streaks_plot = streak_leaderboard.head(20)
 
 plt.figure()
 plt.barh(
@@ -319,7 +319,7 @@ plt.tight_layout()
 plt.savefig("graphs/longest_streaks.png")
 plt.close()
 
-top_droughts_plot = no_point_streaks.head(10)
+top_droughts_plot = no_point_streaks.head(20)
 
 plt.figure()
 plt.barh(
@@ -333,7 +333,7 @@ plt.tight_layout()
 plt.savefig("graphs/longest_droughts.png")
 plt.close()
 
-top_teacher_bias_plot = teacher_bias_df.head(10)
+top_teacher_bias_plot = teacher_bias_df.head(20)
 
 plt.figure()
 plt.barh(
@@ -347,7 +347,7 @@ plt.tight_layout()
 plt.savefig("graphs/teacher_bias.png")
 plt.close()
 
-top_dependence_plot = dependence_leaderboard.head(10)
+top_dependence_plot = dependence_leaderboard.head(20)
 
 plt.figure()
 plt.barh(
@@ -371,7 +371,7 @@ plt.savefig("graphs/consistency_distribution.png")
 plt.close()
 
 plt.figure()
-plt.hist(student_points["Points"], bins=50)
+plt.hist(student_points["Points"], bins=25)
 plt.title("Distribution of Total Points per Student")
 plt.xlabel("Total Points")
 plt.ylabel("Number of Students")

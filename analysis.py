@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("data/raw_points.csv")
+df = pd.read_csv("data/data.csv")
 df["Points"] = pd.to_numeric(df["Points"], errors="coerce").fillna(0)
 
 # Longest Streak
@@ -292,6 +292,7 @@ exclusive_pairs.to_csv("tables/exclusive_pairs.csv", index=False)
 
 top_students_plot = student_points.head(10)
 
+# Plot all graphs
 plt.figure()
 plt.barh(
     top_students_plot["Name"][::-1],
